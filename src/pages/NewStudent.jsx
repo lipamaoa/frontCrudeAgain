@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const NewStudent = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [priorXp, setPriorXp] = useState("");
+  const navigate= useNavigate();
 
-  const handleNewStudent = async () => {
+  const handleNewStudent = async (e) => {
+    e.preventDefault(); 
+
     const priorXpArray = priorXp.split(" ");
     const newStudent = {
       name,
@@ -14,7 +18,7 @@ const NewStudent = () => {
     };
 
     try {
-      const response = fetch(`http://localhost:5005/api/students`, {
+      const response = await fetch(`http://localhost:5005/api/students`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -22,11 +26,14 @@ const NewStudent = () => {
         body: JSON.stringify(newStudent),
       });
       const parsed = await response.json();
+      navigate(`/students/${parsed._id}`)
     } catch (error) {
       console.error("Fail to create a new student:", error);
     }
+  };
 
-    return (
+  return (
+   
       <form onSubmit={handleNewStudent}>
         <input
           type="text"
@@ -40,16 +47,15 @@ const NewStudent = () => {
           placeholder="email"
           onChange={(e) => setEmail(e.target.value)}
         />
-        <input
-          type="text"
+        <textarea
           value={priorXp}
           placeholder="priorXp"
           onChange={(e) => setPriorXp(e.target.value)}
         />
         <button type="submit">Submit</button>
       </form>
-    );
-  };
+    
+  );
 };
 
 export default NewStudent;

@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 const StudentDetailsPage = () => {
-  const studentId = useParams();
+  const {studentId} = useParams();
   const [student, setStudent] = useState();
+  const navigate = useNavigate();
 
   const fetchStudents = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5005/api/students/${studentId}`
-      );
+      const uri = `http://localhost:5005/api/students/${studentId}`;
+      const response = await fetch(uri);
       if (response.status === 200) {
-        const parsedStudents = await response.json();
-        setStudents(parsedStudents);
+        const parsedStudent = await response.json();
+        setStudent(parsedStudent);     
       }
     } catch (error) {
       console.error("Fail to fetch students:", error);
@@ -22,6 +22,19 @@ const StudentDetailsPage = () => {
   useEffect(() => {
     fetchStudents();
   }, []);
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5005/api/students/${studentId}`, { method:"DELETE"}
+      );
+      if (response.status === 202) {
+        navigate("/students")
+      }
+    } catch (error) {
+      console.error("Fail to fetch students:", error);
+    }
+  }
 
   return student ? (
     <>
@@ -34,6 +47,7 @@ const StudentDetailsPage = () => {
         ))}
         ;
       </ul>
+      <button type="submit" onClick={handleDelete}>Delete</button>
     </>
   ) : (
     <h1>Loading...</h1>

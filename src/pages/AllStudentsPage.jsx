@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
 
 const AllStudentsPage = () => {
   const [students, setStudents] = useState([]);
@@ -23,7 +25,7 @@ const AllStudentsPage = () => {
     <>
       <h1>All Students</h1>
       {students.map((student) => (
-        <h3 key={students._id}> {student.name}</h3>
+        <Link key={students._id} to={`/students/${student._id}`}> {student.name}</Link>
       ))}
     </>
   );
